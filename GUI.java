@@ -28,17 +28,17 @@ public class GUI {
         JTextField textfield;
         textfield = new JTextField(20);
         textfield.setBounds(400,40,165,20);
-        frame.add(textfield);
+        panel.add(textfield,BorderLayout.CENTER);
 
         label.setBounds(10, 20, 150, 25);
         label2.setBounds(10, 40, 150, 25);
         label3.setBounds(10, 60, 150, 25);
         label4.setBounds(10, 80, 150, 25);
         
-        panel.add(label);
-        panel.add(label2);
-        panel.add(label3);
-        panel.add(label4);
+        panel.add(label,BorderLayout.WEST);
+        panel.add(label2,BorderLayout.WEST);
+        panel.add(label3,BorderLayout.WEST);
+        panel.add(label4,BorderLayout.WEST);
 
     }
         public static void main(String[] args) {
