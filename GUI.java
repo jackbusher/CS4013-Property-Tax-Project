@@ -3,7 +3,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class GUI  {
+public class GUI {
     
     public GUI() {
 
@@ -26,15 +26,16 @@ public class GUI  {
         JLabel label3 = new JLabel("<html><span style='font-size:20px'>"+"Value"+"</span></html>");
         JLabel label4 = new JLabel("<html><span style='font-size:20px'>"+"Eircode"+"</span></html>");
         JLabel label5 = new JLabel("<html><span style='font-size:20px'>"+"Location Category"+"</span></html>");
+        JLabel label6 = new JLabel("<html><span style='font-size:20px'>"+"Principle Private Residence?"+"</span></html>");
         JLabel emptylabel = new JLabel("");
 
         JTextField ownerTextField = new JTextField(10);
         JTextField valueTextField = new JTextField(20);
         JTextField eircodeTextField = new JTextField(20);
         JTextField locationCategoryTextField = new JTextField(20);
+        JTextField pPRTextField = new JTextField(20);
 
         JButton submit = new JButton("<html><span style='font-size:20px'>"+"Submit"+"</span></html>");
-        //submit.addActionListener(l);
 
         panel.add(label2);
         panel.add(ownerTextField);
@@ -44,12 +45,14 @@ public class GUI  {
         panel.add(eircodeTextField);
         panel.add(label5);
         panel.add(locationCategoryTextField);
-        panel.add(emptylabel);
+        panel.add(label6);
+        panel.add(pPRTextField);
+        panel.add(emptylabel);       
         panel.add(submit);
         
         
 
-        panel.setLayout(new GridLayout(5,2));
+        panel.setLayout(new GridLayout(6,2));
 
     }
         public static void main(String[] args) {
