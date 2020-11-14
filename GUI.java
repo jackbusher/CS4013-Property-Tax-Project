@@ -1,4 +1,7 @@
 import javax.swing.*;
+
+//import org.graalvm.compiler.nodes.virtual.LockState;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,25 +23,34 @@ public class GUI {
         frame.pack();
         frame.setVisible(true);
         
-        JLabel label = new JLabel("Enter infomation");
-        JLabel label2 = new JLabel("Owners");
-        JLabel label3 = new JLabel("Value");
-        JLabel label4 = new JLabel("Eircode");
+        //JLabel label = new JLabel("Enter infomation");
+        JLabel label2 = new JLabel("<html><span style='font-size:20px'>"+"Owners"+"</span></html>");
+        JLabel label3 = new JLabel("<html><span style='font-size:20px'>"+"Value"+"</span></html>");
+        JLabel label4 = new JLabel("<html><span style='font-size:20px'>"+"Eircode"+"</span></html>");
+        JLabel label5 = new JLabel("<html><span style='font-size:20px'>"+"Location Category"+"</span></html>");
+        JLabel emptylabel = new JLabel("");
 
-        JTextField textfield;
-        textfield = new JTextField(20);
-        textfield.setBounds(400,40,165,20);
-        panel.add(textfield,BorderLayout.CENTER);
+        JTextField ownerTextField = new JTextField(10);
+        JTextField valueTextField = new JTextField(20);
+        JTextField eircodeTextField = new JTextField(20);
+        JTextField locationCategoryTextField = new JTextField(20);
 
-        label.setBounds(10, 20, 150, 25);
-        label2.setBounds(10, 40, 150, 25);
-        label3.setBounds(10, 60, 150, 25);
-        label4.setBounds(10, 80, 150, 25);
-        
-        panel.add(label,BorderLayout.WEST);
+        JButton submit = new JButton("<html><span style='font-size:20px'>"+"Submit"+"</span></html>");
+
         panel.add(label2,BorderLayout.WEST);
+        panel.add(ownerTextField,BorderLayout.CENTER);
         panel.add(label3,BorderLayout.WEST);
+        panel.add(valueTextField,BorderLayout.CENTER);
         panel.add(label4,BorderLayout.WEST);
+        panel.add(eircodeTextField,BorderLayout.CENTER);
+        panel.add(label5,BorderLayout.CENTER);
+        panel.add(locationCategoryTextField,BorderLayout.CENTER);
+        panel.add(emptylabel);
+        panel.add(submit);
+        
+        
+
+        panel.setLayout(new GridLayout(5,2));
 
     }
         public static void main(String[] args) {
