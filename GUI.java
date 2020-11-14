@@ -1,11 +1,9 @@
 import javax.swing.*;
-
-//import org.graalvm.compiler.nodes.virtual.LockState;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-public class GUI {
+
+public class GUI  {
     
     public GUI() {
 
@@ -36,15 +34,16 @@ public class GUI {
         JTextField locationCategoryTextField = new JTextField(20);
 
         JButton submit = new JButton("<html><span style='font-size:20px'>"+"Submit"+"</span></html>");
+        //submit.addActionListener(l);
 
-        panel.add(label2,BorderLayout.WEST);
-        panel.add(ownerTextField,BorderLayout.CENTER);
-        panel.add(label3,BorderLayout.WEST);
-        panel.add(valueTextField,BorderLayout.CENTER);
-        panel.add(label4,BorderLayout.WEST);
-        panel.add(eircodeTextField,BorderLayout.CENTER);
-        panel.add(label5,BorderLayout.CENTER);
-        panel.add(locationCategoryTextField,BorderLayout.CENTER);
+        panel.add(label2);
+        panel.add(ownerTextField);
+        panel.add(label3);
+        panel.add(valueTextField);
+        panel.add(label4);
+        panel.add(eircodeTextField);
+        panel.add(label5);
+        panel.add(locationCategoryTextField);
         panel.add(emptylabel);
         panel.add(submit);
         
