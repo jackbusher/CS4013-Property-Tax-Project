@@ -26,7 +26,7 @@ public class GUI {
         JLabel label3 = new JLabel("<html><span style='font-size:20px'>"+"Value"+"</span></html>");
         JLabel label4 = new JLabel("<html><span style='font-size:20px'>"+"Eircode"+"</span></html>");
         JLabel label5 = new JLabel("<html><span style='font-size:20px'>"+"Location Category"+"</span></html>");
-        JLabel label6 = new JLabel("<html><span style='font-size:20px'>"+"Principle Private Residence?"+"</span></html>");
+        JLabel label6 = new JLabel("<html><span style='font-size:20px'>"+"Principle Private Residence?(Y/N)"+"</span></html>");
         JLabel emptylabel = new JLabel("");
 
         JTextField ownerTextField = new JTextField(10);
