@@ -54,7 +54,9 @@ public int value(){
     return this.value;
 }
 
-
+public String toString(){
+    return "Address: "+address+" , Value: "+value;
+}
 
 }
             

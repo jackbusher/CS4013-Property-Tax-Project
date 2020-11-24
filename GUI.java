@@ -5,8 +5,12 @@ import java.awt.event.ActionListener;
 
 public class GUI {
     
+    
+    PropertyManagementInterface propertyManagery;
+    
     public GUI() {
-
+        
+        this.propertyManagery  = new PropertyManagementImpl();
         JFrame frame = new JFrame();     
 
         JPanel panel = new JPanel();
@@ -50,6 +54,24 @@ public class GUI {
         panel.add(emptylabel);       
         panel.add(submit);
         
+        submit.addActionListener(new ActionListener()
+            {
+              public void actionPerformed(ActionEvent e)
+              {
+                  
+                  //create property from form fields
+                  Property property = new Property(ownerTextField.getText(), "CREATE ADDRESS FORMFILELD",
+                  eircodeTextField.getText(), Integer.parseInt(valueTextField.getText()), locationCategoryTextField.getText(), 
+                  pPRTextField.getText().charAt(0));
+
+                  //Add propery using propery manager object
+                 propertyManagery.addProperty(property);
+                // display/center the jdialog when the button is pressed
+                JDialog d = new JDialog(frame, "Property Added", true);
+                d.setLocationRelativeTo(frame);
+                d.setVisible(true);
+              }
+    });
         
 
         panel.setLayout(new GridLayout(6,2));
