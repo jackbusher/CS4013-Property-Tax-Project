@@ -188,7 +188,7 @@ public class GUI {
                   // use comma as separator
                   String[] houses = line.split(cvsSplitBy);
   
-                  System.out.println("Owners [Owners= " + houses[0] + " , Address=" + houses[1] + " , Estimated Value=" + houses[2] + " , Category=" + houses[3] + "]");
+                  System.out.println( "[Owners= " + houses[0] + " , Address=" + houses[1] + " , Estimated Value=" + houses[2] + " , Category=" + houses[3] + "]");
   
               }
   
