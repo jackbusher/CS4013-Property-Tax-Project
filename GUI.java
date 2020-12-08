@@ -2,6 +2,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class GUI {
 	 JPanel container = new JPanel(); //container panel to fit into frame, holds both panels
@@ -96,7 +100,7 @@ public class GUI {
         panel.removeAll();
 
         //JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(6,2)); // set rhs panel layout
+        panel.setLayout(new GridLayout(8,2)); // set rhs panel layout
         container.add(panel);
         frame.add(container);
         container.revalidate();
@@ -107,6 +111,7 @@ public class GUI {
         JLabel label4 = new JLabel("<html><span style='font-size:20px'>"+"Eircode"+"</span></html>");
         JLabel label5 = new JLabel("<html><span style='font-size:20px'>"+"Location Category"+"</span></html>");
         JLabel label6 = new JLabel("<html><span style='font-size:20px'>"+"Principle Private Residence?(Y/N)"+"</span></html>");
+        JLabel label7 = new JLabel("<html><span style='font-size:20px'>"+"Address"+"</span></html>");
         JLabel emptylabel = new JLabel("");
 
         JTextField ownerTextField = new JTextField(10);
@@ -114,6 +119,7 @@ public class GUI {
         JTextField eircodeTextField = new JTextField(20);
         JTextField locationCategoryTextField = new JTextField(20);
         JTextField pPRTextField = new JTextField(20);
+        JTextField addressTextField = new JTextField(20);
 
         JButton submit = new JButton("<html><span style='font-size:20px'>"+"Submit"+"</span></html>");
 
@@ -127,6 +133,8 @@ public class GUI {
         panel.add(locationCategoryTextField);
         panel.add(label6);
         panel.add(pPRTextField);
+        panel.add(label7);
+        panel.add(addressTextField);
         panel.add(emptylabel);       
         panel.add(submit);
         
@@ -136,7 +144,7 @@ public class GUI {
               {
                   
                   //create property from form fields
-                  Property property = new Property(ownerTextField.getText(), "CREATE ADDRESS FORMFILELD",
+                  Property property = new Property(ownerTextField.getText(), addressTextField.getText(),
                   eircodeTextField.getText(), Integer.parseInt(valueTextField.getText()), locationCategoryTextField.getText(), 
                   pPRTextField.getText().charAt(0));
 
@@ -166,6 +174,37 @@ public class GUI {
          
          JLabel c = new JLabel("Property List");	//placeholder content
          panel.add(c);
+
+          String csvFile = "properties.csv";
+          BufferedReader br = null;
+          String line = "";
+          String cvsSplitBy = ",";
+  
+          try {
+  
+              br = new BufferedReader(new FileReader(csvFile));
+              while ((line = br.readLine()) != null) {
+  
+                  // use comma as separator
+                  String[] houses = line.split(cvsSplitBy);
+  
+                  System.out.println("Owners [Owners= " + houses[0] + " , Address=" + houses[1] + " , Estimated Value=" + houses[2] + " , Category=" + houses[3] + "]");
+  
+              }
+  
+          } catch (FileNotFoundException e) {
+              e.printStackTrace();
+          } catch (IOException e) {
+              e.printStackTrace();
+          } finally {
+              if (br != null) {
+                  try {
+                      br.close();
+                  } catch (IOException e) {
+                      e.printStackTrace();
+                  }
+              }
+          }
     	 
      }
         
