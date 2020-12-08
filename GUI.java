@@ -6,11 +6,14 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class GUI {
 	 JPanel container = new JPanel(); //container panel to fit into frame, holds both panels
      JFrame frame = new JFrame(); //frame for entire GUI
      JPanel panel = new JPanel(); //RHS of screen, holds content of one of 4 chosen utilities
+     ArrayList<String> dataRows = new ArrayList<>();
+     String[][] data = new String[4][200];
     
     
     PropertyManagementInterface propertyManagery;
@@ -162,51 +165,85 @@ public class GUI {
     }
         
     public void manage() { 
-    	 
-    	 System.out.println("Manage Properties has been called");
-         container.remove(panel);
-         panel.removeAll();
+   	 
+   	 System.out.println("Manage Properties has been called");
+        container.remove(panel);
+        panel.removeAll();
 
-         container.add(panel);
-         frame.add(container);
-         container.revalidate();
-         container.repaint();
+        container.add(panel);
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        frame.add(container);
+        container.revalidate();
+        container.repaint();
+        
+        JLabel c = new JLabel("Property List");	
+        panel.add(c);
+        c.setFont(new Font("Calibri", Font.PLAIN, 24));
+
+         String csvFile = "properties.csv";
+         BufferedReader br = null;
+         String line = "";
+         String cvsSplitBy = ",";
+ 
+         try {
+ 
+             br = new BufferedReader(new FileReader(csvFile));
+
+			int rowCount=0;
+			String[] tempArr;
+             while ((line = br.readLine()) != null) {
+
+            	 tempArr = line.split(cvsSplitBy);
+            	 
+            	 data[rowCount] = tempArr;
+            	 rowCount++;
+            	 
+             }
+             
+             
+          // Table 
+             JTable j;
+
+             // Column Names 
+             String[] columnNames = { "Owner(s)", "Address", "Value", "Location Category"}; 
+       
+             // Initializing the JTable 
+             j = new JTable(data, columnNames); 
+
+             j.setFont(new Font("Calibri", Font.BOLD, 14));
+             j.getTableHeader().setFont(new Font("SansSerif", Font.ITALIC, 20));
+             j.setRowHeight(24);
+             
+             // adding it to JScrollPane 
+             JScrollPane sp = new JScrollPane(j); 
+
+             // Table 
+             panel.add(sp); 
+             
+             // Frame Size 
+             j.setSize(500, 200); 
+
+             panel.setVisible(true);
+             
+             
+ 
+         } catch (FileNotFoundException e) {
+             e.printStackTrace();
+         } catch (IOException e) {
+             e.printStackTrace();
+         } finally {
+             if (br != null) {
+                 try {
+                     br.close();
+                 } catch (IOException e) {
+                     e.printStackTrace();
+                 }
+             }
+         }
+   	 
+    }
          
-         JLabel c = new JLabel("Property List");	//placeholder content
-         panel.add(c);
 
-          String csvFile = "properties.csv";
-          BufferedReader br = null;
-          String line = "";
-          String cvsSplitBy = ",";
-  
-          try {
-  
-              br = new BufferedReader(new FileReader(csvFile));
-              while ((line = br.readLine()) != null) {
-  
-                  // use comma as separator
-                  String[] houses = line.split(cvsSplitBy);
-  
-                  System.out.println( "[Owners= " + houses[0] + " , Address=" + houses[1] + " , Estimated Value=" + houses[2] + " , Category=" + houses[3] + "]");
-  
-              }
-  
-          } catch (FileNotFoundException e) {
-              e.printStackTrace();
-          } catch (IOException e) {
-              e.printStackTrace();
-          } finally {
-              if (br != null) {
-                  try {
-                      br.close();
-                  } catch (IOException e) {
-                      e.printStackTrace();
-                  }
-              }
-          }
-    	 
-     }
         
      public void view() {
     	 
