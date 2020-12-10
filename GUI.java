@@ -12,8 +12,6 @@ public class GUI {
 	 JPanel container = new JPanel(); //container panel to fit into frame, holds both panels
      JFrame frame = new JFrame(); //frame for entire GUI
      JPanel panel = new JPanel(); //RHS of screen, holds content of one of 4 chosen utilities
-     ArrayList<String> dataRows = new ArrayList<>();
-     String[][] data = new String[4][200];
     
     
     PropertyManagementInterface propertyManagery;
@@ -94,7 +92,7 @@ public class GUI {
         panel1.repaint();
     }
         
-        
+        ArrayList<Property> properties = new ArrayList<Property>();
         
    public void register() {
         	System.out.println("Register Property has been called");
@@ -141,6 +139,8 @@ public class GUI {
         panel.add(emptylabel);       
         panel.add(submit);
         
+        
+        
         submit.addActionListener(new ActionListener()
             {
               public void actionPerformed(ActionEvent e)
@@ -153,6 +153,8 @@ public class GUI {
 
                   //Add propery using propery manager object
                  propertyManagery.addProperty(property);
+                 //Add property to properies array
+                 properties.add(property);
                 // display/center the jdialog when the button is pressed
                 JDialog d = new JDialog(frame, "Property Added", true);
                 d.setLocationRelativeTo(frame);
@@ -165,89 +167,77 @@ public class GUI {
     }
         
     public void manage() { 
-   	 
-   	 System.out.println("Manage Properties has been called");
-        container.remove(panel);
-        panel.removeAll();
+    	 
+    	 System.out.println("Manage Properties has been called");
+         container.remove(panel);
+         panel.removeAll();
 
-        container.add(panel);
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        frame.add(container);
-        container.revalidate();
-        container.repaint();
-        
-        JLabel c = new JLabel("Property List");	
-        panel.add(c);
-        c.setFont(new Font("Calibri", Font.PLAIN, 24));
-
-         String csvFile = "properties.csv";
-         BufferedReader br = null;
-         String line = "";
-         String cvsSplitBy = ",";
- 
-         try {
- 
-             br = new BufferedReader(new FileReader(csvFile));
-
-			int rowCount=0;
-			String[] tempArr;
-             while ((line = br.readLine()) != null) {
-
-            	 tempArr = line.split(cvsSplitBy);
-            	 
-            	 data[rowCount] = tempArr;
-            	 rowCount++;
-            	 
-             }
-             
-             
-          // Table 
-             JTable j;
-
-             // Column Names 
-             String[] columnNames = { "Owner(s)", "Address", "Value", "Location Category"}; 
-       
-             // Initializing the JTable 
-             j = new JTable(data, columnNames); 
-
-             j.setFont(new Font("Calibri", Font.BOLD, 14));
-             j.getTableHeader().setFont(new Font("SansSerif", Font.ITALIC, 20));
-             j.setRowHeight(24);
-             
-             // adding it to JScrollPane 
-             JScrollPane sp = new JScrollPane(j); 
-
-             // Table 
-             panel.add(sp); 
-             
-             // Frame Size 
-             j.setSize(500, 200); 
-
-             panel.setVisible(true);
-             
-             
- 
-         } catch (FileNotFoundException e) {
-             e.printStackTrace();
-         } catch (IOException e) {
-             e.printStackTrace();
-         } finally {
-             if (br != null) {
-                 try {
-                     br.close();
-                 } catch (IOException e) {
-                     e.printStackTrace();
-                 }
-             }
-         }
-   	 
-    }
+         container.add(panel);
+         frame.add(container);
+         container.revalidate();
+         container.repaint();
+         
          
 
+          String csvFile = "properties.csv";
+          BufferedReader br = null;
+          String line = "";
+          String cvsSplitBy = ",";
+  
+          try {
+  
+              br = new BufferedReader(new FileReader(csvFile));
+              while ((line = br.readLine()) != null) {
+  
+                  // use comma as separator
+                  String[] houses = line.split(cvsSplitBy);
+                
+                  System.out.println( "[Owners= " + houses[0] + " , Address=" + houses[1] + " , Estimated Value=" + houses[2] + " , Category=" + houses[3] + "]");
+                
+              }
+  
+          } catch (FileNotFoundException e) {
+              e.printStackTrace();
+          } catch (IOException e) {
+              e.printStackTrace();
+          } finally {
+              if (br != null) {
+                  try {
+                      br.close();
+                  } catch (IOException e) {
+                      e.printStackTrace();
+                  }
+              }
+          }
+          
+          // need to create a layout where you have the option to pay tax on a house. you enter the address of the house youd like to pay
+          //tax on and how much. submit it then it stores the tax paid. also a button to see how much tax remains on a house when entering the address
+          JPanel panel2 = new JPanel();
+          panel.setLayout(new GridLayout(8,2));
+          JButton viewTax = new JButton("<html><span style='font-size:20px'>"+"View tax on property"+"</span></html>");
+          JButton payTax = new JButton("<html><span style='font-size:20px'>"+"Pay tax on property"+"</span></html>");
+          JTextField address = new JTextField();
+          JTextField addressBox = new JTextField();
+          JTextField amount = new JTextField();
+          JLabel viewTax2 = new JLabel("<html><span style='font-size:20px'>"+"Enter your address to see how much tax is outstanding"+"</span></html>");
+          JLabel addressTitle = new JLabel("Enter your address here");
+          JLabel taxtTitle = new JLabel("Enter how much tax you'd like to pay here");
+          
+          JLabel payTaxHeader = new JLabel("<html><span style='font-size:20px'>"+"Enter your address first and then the amount of tax you'd like to pay off"+"</span></html>");
+          panel.add(viewTax2);         
+          panel.add(addressBox);
+          panel.add(viewTax);
+          panel.add(payTaxHeader);         
+          panel.add(address);         
+          panel.add(amount);
+          panel.add(payTax);
+
+          
+     }
         
      public void view() {
     	 
-    	 System.out.println("View Payemnts has been called");
+    	 System.out.println("View Payments has been called");
          container.remove(panel);
          panel.removeAll();
 
@@ -276,7 +266,7 @@ public class GUI {
          panel.add(c);
 	 
      }
-
+    
         
         
         
