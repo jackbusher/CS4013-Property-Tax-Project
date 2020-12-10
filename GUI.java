@@ -212,7 +212,7 @@ public class GUI {
           
           // need to create a layout where you have the option to pay tax on a house. you enter the address of the house youd like to pay
           //tax on and how much. submit it then it stores the tax paid. also a button to see how much tax remains on a house when entering the address
-          JPanel panel2 = new JPanel();
+          //JPanel panel2 = new JPanel();
           panel.setLayout(new GridLayout(8,2));
           JButton viewTax = new JButton("<html><span style='font-size:20px'>"+"View tax on property"+"</span></html>");
           JButton payTax = new JButton("<html><span style='font-size:20px'>"+"Pay tax on property"+"</span></html>");
@@ -220,8 +220,7 @@ public class GUI {
           JTextField addressBox = new JTextField();
           JTextField amount = new JTextField();
           JLabel viewTax2 = new JLabel("<html><span style='font-size:20px'>"+"Enter your address to see how much tax is outstanding"+"</span></html>");
-          JLabel addressTitle = new JLabel("Enter your address here");
-          JLabel taxtTitle = new JLabel("Enter how much tax you'd like to pay here");
+
           
           JLabel payTaxHeader = new JLabel("<html><span style='font-size:20px'>"+"Enter your address first and then the amount of tax you'd like to pay off"+"</span></html>");
           panel.add(viewTax2);         
@@ -232,7 +231,31 @@ public class GUI {
           panel.add(amount);
           panel.add(payTax);
 
-          
+          viewTax.addActionListener(new ActionListener()
+            {
+              double tax;
+              String taxString;
+              public void actionPerformed(ActionEvent e)
+              {
+                  
+                  //check if the address is on record
+                  for(int i=0;i<properties.size();i++) {
+                    if(properties.get(i).address == addressBox.getText()) {
+                      Property property = properties.get(i);
+                      tax = property.accumTax();
+                      taxString = String.valueOf(tax);
+                    }
+                  }
+                        
+                // display/center the jdialog when the button is pressed
+                JDialog d = new JDialog(frame, taxString);
+                          d.setLocationRelativeTo(frame);                          
+                           d.setVisible(true);
+                           
+
+              }
+    });
+
      }
         
      public void view() {
