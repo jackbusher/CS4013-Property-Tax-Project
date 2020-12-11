@@ -301,11 +301,35 @@ public class GUI {
          frame.add(container);
          container.revalidate();
          container.repaint();
+
+         panel.setLayout(new GridLayout(10,1));
          
-         JLabel c = new JLabel("List of all properties/owners and way to sort them");	//placeholder content
-         panel.add(c);
-	 
-     }
+        JLabel l1 = new JLabel("<html><span style='font-size:20px'>"+"Property Tax Data for a Property. Enter the address of the property"+"</span></html>");
+        JLabel l2 = new JLabel("<html><span style='font-size:20px'>"+"Property Tax Data for an owner. Enter a name of an owner"+"</span></html>");
+        JButton b1 = new JButton("<html><span style='font-size:20px'>"+"Submit"+"</span></html>");
+        JButton b2 = new JButton("<html><span style='font-size:20px'>"+"Submit"+"</span></html>");
+        JTextField t1 = new JTextField();
+        JTextField t2 = new JTextField();
+
+        JLabel l3 = new JLabel("<html><span style='font-size:20px'>"+"Get a list of all overdue property tax for a particular year. You can also choose a certain Eircode in the second box. Leave it blank if you dont want to"+"</span></html>");
+        JTextField t3 = new JTextField();
+        JTextField t4 = new JTextField();
+        JButton b3 = new JButton("<html><span style='font-size:20px'>"+"Submit"+"</span></html>");
+
+        panel.add(l1);
+        panel.add(t1);
+        panel.add(b1);
+        panel.add(l2);
+        panel.add(t2);
+        panel.add(b2);
+        panel.add(l3);
+        panel.add(t3);
+        panel.add(t4);
+        panel.add(b3);
+
+        
+         
+     }  
      
      
      public String updateTaxPayment(boolean subtract, String address) {
