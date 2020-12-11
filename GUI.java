@@ -302,7 +302,7 @@ public class GUI {
          container.revalidate();
          container.repaint();
 
-         panel.setLayout(new GridLayout(10,1));
+         panel.setLayout(new GridLayout(7,2));
          
         JLabel l1 = new JLabel("<html><span style='font-size:20px'>"+"Property Tax Data for a Property. Enter the address of the property"+"</span></html>");
         JLabel l2 = new JLabel("<html><span style='font-size:20px'>"+"Property Tax Data for an owner. Enter a name of an owner"+"</span></html>");
@@ -311,21 +311,29 @@ public class GUI {
         JTextField t1 = new JTextField();
         JTextField t2 = new JTextField();
 
-        JLabel l3 = new JLabel("<html><span style='font-size:20px'>"+"Get a list of all overdue property tax for a particular year. You can also choose a certain Eircode in the second box. Leave it blank if you dont want to"+"</span></html>");
+        JLabel l3 = new JLabel("<html><span style='font-size:20px'>"+"Enter a year and eircode(optional) to get tax stats from that year (and area)"+"</span></html>");
         JTextField t3 = new JTextField();
         JTextField t4 = new JTextField();
         JButton b3 = new JButton("<html><span style='font-size:20px'>"+"Submit"+"</span></html>");
 
+        JLabel l4 = new JLabel("<html><span style='font-size:20px'>" +"Enter an eircode to get stats on this area" +"</span><html>");
+        JTextField t5 = new JTextField();
+        JButton b4 = new JButton("<html><span style='font-size:20px'>"+"Submit"+"</span></html>");
+
         panel.add(l1);
-        panel.add(t1);
-        panel.add(b1);
         panel.add(l2);
+        panel.add(t1);
         panel.add(t2);
+        panel.add(b1);
         panel.add(b2);
+
         panel.add(l3);
-        panel.add(t3);
+        panel.add(l4);
+        panel.add(t3);        
         panel.add(t4);
-        panel.add(b3);
+        panel.add(t5);
+        panel.add(b3);     
+        panel.add(b4);
 
         
          
