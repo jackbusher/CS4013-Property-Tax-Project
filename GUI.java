@@ -18,6 +18,8 @@ public class GUI {
      String taxString;
      double taxValue;
      boolean paid = false;
+     String[][] data = new String[200][200];
+     String[] csvArray = new String[200];
     
     
     PropertyManagementInterface propertyManagery;
@@ -216,7 +218,7 @@ public class GUI {
             	  String address = addressBox.getText();
             	  
             	  if(paid == false) {
-            		  updateTaxPayment(false, address); 
+            		  updateTaxPayment(false, address, 0); 
             	  }
                         
                 // display/center the jdialog when the button is pressed
@@ -247,7 +249,7 @@ public class GUI {
                     	    	taxValue = Double.parseDouble(tempArr[1]);
                     	    	taxValue = taxValue - Double.parseDouble(amount.getText()); //new tax value after payment
                     	    	Tax.taxlist.get(i).accumTax(true, taxValue); //update new tax value in taxlist
-                    	    	updateTaxPayment(true, address.getText()); //update csv file with new taxlist
+                    	    	updateTaxPayment(true, address.getText(), Double.parseDouble(amount.getText())); //update csv file with new taxlist
                     	    	paid = true;
                     	    	break;
                     	    }
@@ -282,17 +284,108 @@ public class GUI {
          panel.removeAll();
 
          container.add(panel);
+         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
          frame.add(container);
          container.revalidate();
          container.repaint();
          
          JLabel c = new JLabel("Payment List");	//placeholder content
          panel.add(c);
+         
+         
+         c.setFont(new Font("Calibri", Font.PLAIN, 24));
+
+         String csvFile = "propertiesTax.csv";
+         BufferedReader br = null;
+         String line = "";
+         String cvsSplitBy = ",";
+         int biggestRow = 2;
+
+         try {
+
+             br = new BufferedReader(new FileReader(csvFile));
+
+			int rowCount=0;
+			String[] tempArr1;
+			while ((line = br.readLine()) != null) {
+
+            	 tempArr1 = line.split(cvsSplitBy);
+            	 
+            	 if(tempArr1.length > biggestRow) {
+            	 biggestRow = tempArr1.length;}
+
+            	 data[rowCount] = tempArr1;
+            	 rowCount++;
+
+             }
+			
+			for(int p=0; p<data.length; p++) {	//resize arrays to be filled with null values in order to increase headings
+			if(data[p].length < biggestRow) {
+				int rowL = data[p].length;
+				
+				String[] temp = new String[biggestRow];
+				for(int x=0; x<rowL; x++) {
+	            			temp[x] = data[p][x];
+	            			data[p] = temp;
+	             }
+			}
+			}
+
+
+          // Table 
+             JTable j;
+
+          // Column Names 
+             String[] columnNames = new String[biggestRow];
+             columnNames[0] = "Address";
+             columnNames[1] = "Balance"; 
+             System.out.println("biggestRow: " + biggestRow);
+             
+             for(int x=0; x<biggestRow-2; x++) {
+            	 columnNames[x+2] = "Payment " + (x+1);
+             }
+             
+
+            // String[] columnNames = { "Owner(s)", "Address"}; // "Location Category", "Payment", "Payment4", "Payment5"}; 
+             // Initializing the JTable 
+             j = new JTable(data, columnNames); 
+
+             j.setFont(new Font("Calibri", Font.BOLD, 14));
+             j.getTableHeader().setFont(new Font("SansSerif", Font.ITALIC, 20));
+             j.setRowHeight(24);
+
+             // adding it to JScrollPane 
+             JScrollPane sp = new JScrollPane(j); 
+
+             // Table 
+             panel.add(sp); 
+
+             // Frame Size 
+             j.setSize(500, 200); 
+
+             panel.setVisible(true);
+
+
+
+         } catch (FileNotFoundException e) {
+             e.printStackTrace();
+         } catch (IOException e) {
+             e.printStackTrace();
+         } finally {
+             if (br != null) {
+                 try {
+                     br.close();
+                 } catch (IOException e) {
+                     e.printStackTrace();
+                 }
+             }
+         }
     	 
      }
 
      public void envMan() {
     	 
+
     	 System.out.println("Manage DOE has been called");
          container.remove(panel);
          panel.removeAll();
@@ -303,7 +396,7 @@ public class GUI {
          container.repaint();
 
          panel.setLayout(new GridLayout(7,2));
-         
+
         JLabel l1 = new JLabel("<html><span style='font-size:20px'>"+"Property Tax Data for a Property. Enter the address of the property"+"</span></html>");
         JLabel l2 = new JLabel("<html><span style='font-size:20px'>"+"Property Tax Data for an owner. Enter a name of an owner"+"</span></html>");
         JButton b1 = new JButton("<html><span style='font-size:20px'>"+"Submit"+"</span></html>");
@@ -315,12 +408,13 @@ public class GUI {
         JTextField t3 = new JTextField();
         JTextField t4 = new JTextField();
         JButton b3 = new JButton("<html><span style='font-size:20px'>"+"Submit"+"</span></html>");
-
         JLabel l4 = new JLabel("<html><span style='font-size:20px'>" +"Enter an eircode to get stats on this area" +"</span><html>");
         JTextField t5 = new JTextField();
         JButton b4 = new JButton("<html><span style='font-size:20px'>"+"Submit"+"</span></html>");
 
         panel.add(l1);
+        panel.add(t1);
+        panel.add(b1);
         panel.add(l2);
         panel.add(t1);
         panel.add(t2);
@@ -328,36 +422,105 @@ public class GUI {
         panel.add(b2);
 
         panel.add(l3);
+        panel.add(t3);
         panel.add(l4);
         panel.add(t3);        
         panel.add(t4);
+        panel.add(b3);
         panel.add(t5);
         panel.add(b3);     
         panel.add(b4);
 
-        
-         
-     }  
+	 
+     }
      
      
-     public String updateTaxPayment(boolean subtract, String address) {
-
+     public String updateTaxPayment(boolean subtract, String address, double payment) {
+    	 String[] rowArr = null;
+    	 int countTrack =0;
+    	 boolean addressHere = false;
+    	 
          //check if the address is on record
          for(int i=0;i<Tax.taxlist.size();i++) {
            if(Tax.taxlist.get(i).address.equals(address)) {
         	   System.out.println("updating propertiesTax.csv");
+        	   
+        	   try { //read csv
+               	BufferedReader csvReader = new BufferedReader(new FileReader("propertiesTax.csv"));
+               	String row;
+               	int count =0;
+               	//int countTrack =0;
+				try {
+					while ((row = csvReader.readLine()) != null) {
+						
+						 csvArray[count] = row; 
+						 count++;
+						 
+					    if (row.contains(address)) {
+					    	 rowArr = row.split(","); //array of content of one row
+					    	 countTrack = count;
+					    	 addressHere = true;
+					    	
+					    }
+					}
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+               	try {
+					csvReader.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}}
+        	   catch (FileNotFoundException e1) {
+                   System.out.println(e1.getMessage());
+                 }
 
            	//write to csv 
         	   if(subtract) {
                try (PrintWriter writer = new PrintWriter(new FileOutputStream(new File("propertiesTax.csv"), false))) {
 
                    StringBuilder sb = new StringBuilder();
+                   
+                   for(int r=0; r<rowArr.length; r++) {
+                	   
+                	   if(r == countTrack) {
+                		   sb.append(Tax.taxlist.get(i).getAddress());
+                           sb.append(',');
+                           sb.append(Tax.taxlist.get(i).accumTax(true, taxValue));
+                           sb.append(',');
+                    	   for(int x=0; x<rowArr.length-2; x++) {
+                    		   sb.append(rowArr[x+2]);
+                               sb.append(',');
+                    	   }	sb.append(payment);
+                    	   sb.append('\n');
+                	   }
+                	   sb.append(csvArray[r]);
+                	   sb.append(',');
+                	   System.out.println("updating csv " + csvArray[r]);
+                	   
+                   }
+                   
+                   
+                 /**  
                    for(int j=0; j<Tax.taxlist.size(); j++) {
+                	   sb.append(Tax.taxlist.get(i).getAddress());
+                       sb.append(',');
+                       sb.append(Tax.taxlist.get(i).accumTax(true, taxValue));
+                       sb.append(',');
+                	   for(int x=0; x<rowArr.length-2; x++) {
+                		   sb.append(rowArr[x+2]);
+                           sb.append(',');
+                	   }	sb.append(payment);
+                	   sb.append('\n');
+                	   
+                	   
                    sb.append(Tax.taxlist.get(i).getAddress());
                    sb.append(',');
                    sb.append(Tax.taxlist.get(i).accumTax(true, taxValue));
-                   sb.append('\n');
-                   }
+                   sb.append(',');
+                   sb.append(payment);
+                   sb.append('\n');	**/
+                   	
              
                    writer.write(sb.toString());
              
@@ -368,7 +531,8 @@ public class GUI {
                    System.out.println(l.getMessage());
                  }
         	   }else {
-        		   try (PrintWriter writer = new PrintWriter(new FileOutputStream(new File("propertiesTax.csv"), false))) {
+        		   if(addressHere == false) { //if address is already present no need to write tax
+        		   try (PrintWriter writer = new PrintWriter(new FileOutputStream(new File("propertiesTax.csv"), true))) {
 
                        StringBuilder sb = new StringBuilder();
                        for(int j=0; j<Tax.taxlist.size(); j++) {
@@ -387,7 +551,7 @@ public class GUI {
                        System.out.println(l.getMessage());
                      }
         	   }
-           	
+           }
              
            }
          }
