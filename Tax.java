@@ -4,10 +4,11 @@ public class Tax extends Property {
     String[] locations = {"City","Large Town","Small Town","Village","Countryside"};
     int[] rates = { 100, 80, 60, 50, 25 };
     double accumTax;
-    public ArrayList<Tax> taxlist = new ArrayList<Tax>();
+    public static ArrayList<Tax> taxlist = new ArrayList<Tax>();
         public Tax(String owners, String address, String eircode, int value, String locationCategory, char ppr) {
             super(owners,address,eircode,value,locationCategory,ppr);
         }
+        
 public double getMarketValueTax () {
         double taxrate;
 
@@ -29,7 +30,7 @@ public double getMarketValueTax () {
     public double getLocationTax() {
         int locationTax=0;
         for(int i=0;i<locations.length;i++) {
-            if(locations[i] == locationCategory) {
+            if(locations[i].contentEquals( locationCategory)) {
                 locationTax = rates[i];
                 break;
             }
@@ -37,15 +38,21 @@ public double getMarketValueTax () {
         return locationTax;
     }
 
-    public double accumTax() {
-        this.accumTax = accumTax + getLocationTax();
-        accumTax = (accumTax + value*getMarketValueTax());
+    public double accumTax(boolean sub, double subbedValue) {
+    	if(sub) {
+    		return subbedValue;
+    	}
+        this.accumTax = 100;
+        accumTax = (getLocationTax() + value*getMarketValueTax());
         if(getPPR() == 'N') {
             accumTax = accumTax + 100;
         }
-        accumTax = accumTax  + 100;
 
         return accumTax;
+    }
+    
+    public static void addTaxList(Tax taxProp){
+    	taxlist.add(taxProp);
     }
     }
 

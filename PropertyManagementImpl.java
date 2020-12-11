@@ -35,6 +35,7 @@ public class PropertyManagementImpl implements PropertyManagementInterface
          System.out.println("Paying tax on property");
         }
     
+        
     
     
     

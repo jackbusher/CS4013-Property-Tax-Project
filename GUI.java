@@ -3,15 +3,21 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 public class GUI {
 	 JPanel container = new JPanel(); //container panel to fit into frame, holds both panels
      JFrame frame = new JFrame(); //frame for entire GUI
      JPanel panel = new JPanel(); //RHS of screen, holds content of one of 4 chosen utilities
+     String taxString;
+     double taxValue;
+     boolean paid = false;
     
     
     PropertyManagementInterface propertyManagery;
@@ -150,12 +156,15 @@ public class GUI {
                   Property property = new Property(ownerTextField.getText(), addressTextField.getText(),
                   eircodeTextField.getText(), Integer.parseInt(valueTextField.getText()), locationCategoryTextField.getText(), 
                   pPRTextField.getText().charAt(0));
+                  
 
-                  //Add propery using propery manager object
+                  //Add property using property manager object
                  propertyManagery.addProperty(property);
-                 //Add property to properies array
+                 //Add property to properties array
                  properties.add(property);
-                // display/center the jdialog when the button is pressed
+                 Tax taxProp = new Tax(property.getOwners(), property.getAddress(), property.eircode(), property.getValue(), property.locationCategory(), property.getPPR() );
+                 Tax.addTaxList(taxProp); // add to taxlist
+                 // display/center the jdialog when the button is pressed
                 JDialog d = new JDialog(frame, "Property Added", true);
                 d.setLocationRelativeTo(frame);
                 d.setVisible(true);
@@ -167,6 +176,7 @@ public class GUI {
     }
         
     public void manage() { 
+    	
     	 
     	 System.out.println("Manage Properties has been called");
          container.remove(panel);
@@ -176,41 +186,9 @@ public class GUI {
          frame.add(container);
          container.revalidate();
          container.repaint();
-         
-         
 
-          String csvFile = "properties.csv";
-          BufferedReader br = null;
-          String line = "";
-          String cvsSplitBy = ",";
-  
-          try {
-  
-              br = new BufferedReader(new FileReader(csvFile));
-              while ((line = br.readLine()) != null) {
-  
-                  // use comma as separator
-                  String[] houses = line.split(cvsSplitBy);
-                
-                  System.out.println( "[Owners= " + houses[0] + " , Address=" + houses[1] + " , Estimated Value=" + houses[2] + " , Category=" + houses[3] + "]");
-                
-              }
-  
-          } catch (FileNotFoundException e) {
-              e.printStackTrace();
-          } catch (IOException e) {
-              e.printStackTrace();
-          } finally {
-              if (br != null) {
-                  try {
-                      br.close();
-                  } catch (IOException e) {
-                      e.printStackTrace();
-                  }
-              }
-          }
           
-          // need to create a layout where you have the option to pay tax on a house. you enter the address of the house youd like to pay
+          // need to create a layout where you have the option to pay tax on a house. you enter the address of the house you'd like to pay
           //tax on and how much. submit it then it stores the tax paid. also a button to see how much tax remains on a house when entering the address
           //JPanel panel2 = new JPanel();
           panel.setLayout(new GridLayout(8,2));
@@ -233,19 +211,13 @@ public class GUI {
 
           viewTax.addActionListener(new ActionListener()
             {
-              double tax;
-              String taxString;
               public void actionPerformed(ActionEvent e)
               {
-                  
-                  //check if the address is on record
-                  for(int i=0;i<properties.size();i++) {
-                    if(properties.get(i).address == addressBox.getText()) {
-                      Property property = properties.get(i);
-                      tax = property.accumTax();
-                      taxString = String.valueOf(tax);
-                    }
-                  }
+            	  String address = addressBox.getText();
+            	  
+            	  if(paid == false) {
+            		  updateTaxPayment(false, address); 
+            	  }
                         
                 // display/center the jdialog when the button is pressed
                 JDialog d = new JDialog(frame, taxString);
@@ -255,6 +227,51 @@ public class GUI {
 
               }
     });
+          
+          
+          payTax.addActionListener(new ActionListener()
+          {
+            String row = "";
+            String[] tempArr;
+            public void actionPerformed(ActionEvent e)
+            {
+            	address.getText();
+            	for(int i=0;i<properties.size();i++) {
+                    if(properties.get(i).address.equals( address.getText())) {
+                    	
+                    	try {
+                    	BufferedReader csvReader = new BufferedReader(new FileReader("propertiesTax.csv"));
+                    	while ((row = csvReader.readLine()) != null) {
+                    	    if (row.contains(address.getText())) {
+                    	    	tempArr = row.split(",");
+                    	    	taxValue = Double.parseDouble(tempArr[1]);
+                    	    	taxValue = taxValue - Double.parseDouble(amount.getText()); //new tax value after payment
+                    	    	Tax.taxlist.get(i).accumTax(true, taxValue); //update new tax value in taxlist
+                    	    	updateTaxPayment(true, address.getText()); //update csv file with new taxlist
+                    	    	paid = true;
+                    	    	break;
+                    	    }
+                    	}
+                    	csvReader.close();}
+                    	
+                     catch (FileNotFoundException e1) {
+                        System.out.println(e1.getMessage());
+                      } catch (NumberFormatException e1) {
+						e1.printStackTrace();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+                    	
+                    	
+                    }
+                    }
+            	
+            	
+            } //end of actionPerformed
+            
+          
+          
+          });
 
      }
         
@@ -288,6 +305,62 @@ public class GUI {
          JLabel c = new JLabel("List of all properties/owners and way to sort them");	//placeholder content
          panel.add(c);
 	 
+     }
+     
+     
+     public String updateTaxPayment(boolean subtract, String address) {
+
+         //check if the address is on record
+         for(int i=0;i<Tax.taxlist.size();i++) {
+           if(Tax.taxlist.get(i).address.equals(address)) {
+        	   System.out.println("updating propertiesTax.csv");
+
+           	//write to csv 
+        	   if(subtract) {
+               try (PrintWriter writer = new PrintWriter(new FileOutputStream(new File("propertiesTax.csv"), false))) {
+
+                   StringBuilder sb = new StringBuilder();
+                   for(int j=0; j<Tax.taxlist.size(); j++) {
+                   sb.append(Tax.taxlist.get(i).getAddress());
+                   sb.append(',');
+                   sb.append(Tax.taxlist.get(i).accumTax(true, taxValue));
+                   sb.append('\n');
+                   }
+             
+                   writer.write(sb.toString());
+             
+                   System.out.println("done!");
+                   taxString = String.valueOf(Tax.taxlist.get(i).accumTax(true, taxValue));
+             
+                 } catch (FileNotFoundException l) {
+                   System.out.println(l.getMessage());
+                 }
+        	   }else {
+        		   try (PrintWriter writer = new PrintWriter(new FileOutputStream(new File("propertiesTax.csv"), false))) {
+
+                       StringBuilder sb = new StringBuilder();
+                       for(int j=0; j<Tax.taxlist.size(); j++) {
+                       sb.append(Tax.taxlist.get(i).getAddress());
+                       sb.append(',');
+                       sb.append(Tax.taxlist.get(i).accumTax(false, 0));
+                       sb.append('\n');
+                       }
+                 
+                       writer.write(sb.toString());
+                 
+                       System.out.println("done!");
+                       taxString = String.valueOf(Tax.taxlist.get(i).accumTax(false, 0));
+                 
+                     } catch (FileNotFoundException l) {
+                       System.out.println(l.getMessage());
+                     }
+        	   }
+           	
+             
+           }
+         }
+		return taxString;
+           
      }
     
         
