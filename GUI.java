@@ -20,6 +20,7 @@ public class GUI {
      boolean paid = false;
      String[][] data = new String[200][200];
      String[] csvArray = new String[200];
+     int addressCount=0;
     
     
     PropertyManagementInterface propertyManagery;
@@ -194,7 +195,7 @@ public class GUI {
           //tax on and how much. submit it then it stores the tax paid. also a button to see how much tax remains on a house when entering the address
           //JPanel panel2 = new JPanel();
           panel.setLayout(new GridLayout(8,2));
-          JButton viewTax = new JButton("<html><span style='font-size:20px'>"+"View tax on property"+"</span></html>");
+          JButton viewTax = new JButton("<html><span style='font-size:20px'>"+"Calculate tax on property"+"</span></html>");
           JButton payTax = new JButton("<html><span style='font-size:20px'>"+"Pay tax on property"+"</span></html>");
           JTextField address = new JTextField();
           JTextField addressBox = new JTextField();
@@ -216,10 +217,9 @@ public class GUI {
               public void actionPerformed(ActionEvent e)
               {
             	  String address = addressBox.getText();
-            	  
-            	  if(paid == false) {
+            		  
             		  updateTaxPayment(false, address, 0); 
-            	  }
+            	  
                         
                 // display/center the jdialog when the button is pressed
                 JDialog d = new JDialog(frame, taxString);
@@ -346,7 +346,6 @@ public class GUI {
              }
              
 
-            // String[] columnNames = { "Owner(s)", "Address"}; // "Location Category", "Payment", "Payment4", "Payment5"}; 
              // Initializing the JTable 
              j = new JTable(data, columnNames); 
 
@@ -439,6 +438,7 @@ public class GUI {
     	 String[] rowArr = null;
     	 int countTrack =0;
     	 boolean addressHere = false;
+    	 int count=0;
     	 
          //check if the address is on record
          for(int i=0;i<Tax.taxlist.size();i++) {
@@ -448,7 +448,7 @@ public class GUI {
         	   try { //read csv
                	BufferedReader csvReader = new BufferedReader(new FileReader("propertiesTax.csv"));
                	String row;
-               	int count =0;
+               count =0;
                	//int countTrack =0;
 				try {
 					while ((row = csvReader.readLine()) != null) {
@@ -458,11 +458,14 @@ public class GUI {
 						 
 					    if (row.contains(address)) {
 					    	 rowArr = row.split(","); //array of content of one row
-					    	 countTrack = count;
+					    	 countTrack = count-1;
 					    	 addressHere = true;
 					    	
 					    }
 					}
+					
+					csvReader.close();
+					
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
@@ -481,48 +484,40 @@ public class GUI {
 
                    StringBuilder sb = new StringBuilder();
                    
-                   for(int r=0; r<rowArr.length; r++) {
+                   for(int r=0; r<addressCount; r++) {
                 	   
                 	   if(r == countTrack) {
                 		   sb.append(Tax.taxlist.get(i).getAddress());
                            sb.append(',');
-                           sb.append(Tax.taxlist.get(i).accumTax(true, taxValue));
-                           sb.append(',');
+                           sb.append(taxValue);
                     	   for(int x=0; x<rowArr.length-2; x++) {
+                    		   sb.append(',');
                     		   sb.append(rowArr[x+2]);
-                               sb.append(',');
-                    	   }	sb.append(payment);
+                               
+                    	   }	
+                    	   if(payment>0) {
+                    		   sb.append(',');
+                    		   sb.append(payment);
+                        	   sb.append('\n');
+                    	   }else {
                     	   sb.append('\n');
+                    	   }
+                	   }else {
+                	   sb.append(csvArray[r]);}
+                	   if(r == addressCount-1) {
+                		 //  sb.append(',');
+                		   sb.append('\n');
                 	   }
-                	   sb.append(csvArray[r]);
-                	   sb.append(',');
                 	   System.out.println("updating csv " + csvArray[r]);
                 	   
                    }
                    
                    
-                 /**  
-                   for(int j=0; j<Tax.taxlist.size(); j++) {
-                	   sb.append(Tax.taxlist.get(i).getAddress());
-                       sb.append(',');
-                       sb.append(Tax.taxlist.get(i).accumTax(true, taxValue));
-                       sb.append(',');
-                	   for(int x=0; x<rowArr.length-2; x++) {
-                		   sb.append(rowArr[x+2]);
-                           sb.append(',');
-                	   }	sb.append(payment);
-                	   sb.append('\n');
-                	   
-                	   
-                   sb.append(Tax.taxlist.get(i).getAddress());
-                   sb.append(',');
-                   sb.append(Tax.taxlist.get(i).accumTax(true, taxValue));
-                   sb.append(',');
-                   sb.append(payment);
-                   sb.append('\n');	**/
                    	
              
                    writer.write(sb.toString());
+                   writer.flush();
+                   writer.close();
              
                    System.out.println("done!");
                    taxString = String.valueOf(Tax.taxlist.get(i).accumTax(true, taxValue));
@@ -532,19 +527,25 @@ public class GUI {
                  }
         	   }else {
         		   if(addressHere == false) { //if address is already present no need to write tax
+        			   addressCount++;
         		   try (PrintWriter writer = new PrintWriter(new FileOutputStream(new File("propertiesTax.csv"), true))) {
 
                        StringBuilder sb = new StringBuilder();
-                       for(int j=0; j<Tax.taxlist.size(); j++) {
-                       sb.append(Tax.taxlist.get(i).getAddress());
-                       sb.append(',');
-                       sb.append(Tax.taxlist.get(i).accumTax(false, 0));
-                       sb.append('\n');
+                       
+                       if(count>Tax.taxlist.size()-1) {
+                    	   count--;
                        }
+
+                       sb.append(Tax.taxlist.get(count).getAddress());
+                       sb.append(',');
+                       sb.append(Tax.taxlist.get(count).accumTax(false, 0));
+                       sb.append('\n');
+                      
                  
                        writer.write(sb.toString());
+                       System.out.println(sb);
                  
-                       System.out.println("done!");
+                       System.out.println("Done!");
                        taxString = String.valueOf(Tax.taxlist.get(i).accumTax(false, 0));
                  
                      } catch (FileNotFoundException l) {
@@ -552,9 +553,10 @@ public class GUI {
                      }
         	   }
            }
+        	   }
              
            }
-         }
+         
 		return taxString;
            
      }
