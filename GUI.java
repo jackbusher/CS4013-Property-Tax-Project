@@ -339,7 +339,6 @@ public class GUI {
              String[] columnNames = new String[biggestRow];
              columnNames[0] = "Address";
              columnNames[1] = "Balance"; 
-             System.out.println("biggestRow: " + biggestRow);
              
              for(int x=0; x<biggestRow-2; x++) {
             	 columnNames[x+2] = "Payment " + (x+1);
@@ -449,7 +448,6 @@ public class GUI {
                	BufferedReader csvReader = new BufferedReader(new FileReader("propertiesTax.csv"));
                	String row;
                count =0;
-               	//int countTrack =0;
 				try {
 					while ((row = csvReader.readLine()) != null) {
 						
@@ -532,7 +530,7 @@ public class GUI {
 
                        StringBuilder sb = new StringBuilder();
                        
-                       if(count>Tax.taxlist.size()-1) {
+                       if(count>=Tax.taxlist.size()) {
                     	   count--;
                        }
 
